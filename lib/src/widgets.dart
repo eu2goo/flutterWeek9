@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget {
@@ -41,15 +42,51 @@ class IconAndDetail extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
+            Expanded(
+              child: Text(
+                detail,
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
             Icon(icon),
             const SizedBox(width: 8),
-            Text(
-              detail,
-              style: const TextStyle(fontSize: 18),
-            )
           ],
         ),
       );
+}
+
+class IconButtonAndDetail extends StatelessWidget {
+  const IconButtonAndDetail(this.icon, this.detail, this.onPressed,
+      {super.key, required this.userIdOfMessage});
+  final IconData icon;
+  final String detail;
+  final void Function() onPressed;
+
+  final String userIdOfMessage;
+  @override
+  Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              detail,
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+          if (currentUser != null && currentUser.uid == userIdOfMessage)
+            IconButton(
+              icon: Icon(icon),
+              onPressed: onPressed,
+            ),
+          const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
 }
 
 class StyledButton extends StatelessWidget {
